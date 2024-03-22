@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Matrix-Style Text Editor</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 追加 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!-- 変更 -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap">
     <style>
@@ -21,7 +21,7 @@
         }
         textarea {
             width: 60vw;
-            font-size: 16pt; /* フォントサイズを16ptに変更 */
+            font-size: 16pt !important; /* フォントサイズを16ptに固定 */
             height: 80vh;
             color: #FFDDC1;
             font-family: 'Noto Serif JP', serif;
@@ -33,24 +33,7 @@
             outline: none;
             background-color: #2A1B0A;
         }
-        .controls, .font-switcher, .clear-button {
-            position: absolute;
-            bottom: 10px;
-        }
-        .controls button, .font-switcher button, .clear-button {
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            margin-right: 10px;
-            background-color: #4A2E1E;
-            color: #FFDDC1;
-        }
-        .font-switcher {
-            right: 10px;
-        }
-        .clear-button {
-            left: 10px;
-        }
+        /* 以下略 */
     </style>
 </head>
 <body>
