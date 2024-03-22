@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Matrix-Style Text Editor</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap">
+    <style>
+        body {
+            font-family: 'Sawarabi Mincho', serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            background-color: #2A1B0A;
+            color: #FFDDC1;
+        }
+        textarea {
+            width: 60vw;
+            font-size: 16pt;
+            height: 80vh;
+            color: #FFDDC1;
+            font-family: 'Noto Serif JP', serif;
+            resize: none;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 10px;
+            border: none;
+            outline: none;
+            background-color: #2A1B0A;
+        }
+        .controls, .font-switcher, .clear-button {
+            position: absolute;
+            bottom: 10px;
+        }
+        .controls button, .font-switcher button, .clear-button {
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+            background-color: #4A2E1E;
+            color: #FFDDC1;
+        }
+        .font-switcher {
+            right: 10px;
+        }
+        .clear-button {
+            left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<textarea id="editor" placeholder="Enter your text here..."></textarea>
+<div class="controls">
+    <button onclick="saveText()">Save</button>
+    <button onclick="loadText()">Open File</button>
+</div>
+<div class="font-switcher">
+    <button onclick="changeFont()">Change Font</button>
+</div>
+<button class="clear-button" onclick="clearText()">Clear Screen</button>
+
+<script>
+    let fontIndex = 0;
+    const fonts = ['Sawarabi Mincho', 'Noto Serif JP'];
+
+    window.onload = function() {
+        resizeTextArea();
+        loadSavedText();
+        setupKeyboardShortcuts();
+    };
+
+    window.addEventListener('resize', resizeTextArea);
+
+    function resizeTextArea() {
+        const windowWidth = window.innerWidth;
+        document.getElementById('editor').style.width = `${windowWidth * 0.6}px`;
+    }
+
+    function loadSavedText() {
+        const savedText = localStorage.getItem('savedText');
+        if (savedText) {
+            document.getElementById('editor').value = savedText;
+        }
+    }
+
+    function setupKeyboardShortcuts() {
+        document.addEventListener('keydown', function(event) {
+            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                event.preventDefault();
+                saveText();
+            }
+        });
+    }
+
+    function changeFont() {
+        fontIndex = (fontIndex + 1) % fonts.length;
+        const selectedFont = fonts[fontIndex];
+        document.getElementById('editor').style.fontFamily = selectedFont;
+    }
+
+    function saveText() {
+        const textContent = document.getElementById('editor').value;
+        const fileName = prompt('Please enter the file name to save', 'saved_text.txt');
+        if (fileName) {
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.target = '_blank';
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    }
+
+    function loadText() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'text/plain';
+        input.onchange = function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                document.getElementById('editor').value = text;
+                localStorage.setItem('savedText', text);
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    }
+
+    function clearText() {
+        const textarea = document.getElementById('editor');
+        textarea.value = '';
+        localStorage.removeItem('savedText');
+    }
+</script>
+
+</body>
+</html>
