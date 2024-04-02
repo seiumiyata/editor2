@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap">
+    <script src="https://unpkg.com/dropbox/dist/Dropbox-sdk.min.js"></script>
     <style>
         body {
             font-family: 'Sawarabi Mincho', serif;
@@ -68,6 +69,10 @@
     let fontIndex = 0;
     const fonts = ['Sawarabi Mincho', 'Noto Serif JP'];
     let autoSaveTimer;
+
+    // Dropboxの設定
+    const accessToken = 'osmyi4m29nljqp0';
+    const dbx = new Dropbox.Dropbox({ accessToken: accessToken });
 
     window.onload = function() {
         resizeTextArea();
@@ -135,7 +140,16 @@
 
     function startAutoSave() {
         autoSaveTimer = setInterval(function() {
-            saveText();
+            const textContent = document.getElementById('editor').value;
+            const file = new Blob([textContent], { type: 'text/plain' });
+
+            dbx.filesUpload({ path: '/matrix_editor_autosave.txt', contents: file, mode: 'overwrite' })
+                .then(function(response) {
+                    console.log('File uploaded successfully:', response);
+                })
+                .catch(function(error) {
+                    console.error('Error uploading file:', error);
+                });
         }, 5000); // 5秒ごとに自動保存
     }
 
